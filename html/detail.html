@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <h1>详情</h1>
+  <button onclick="sendMsg()">发生消息给android</button>
+  <script>
+    var oH1 =document.getElementsByTagName("h1")[0]
+
+    
+    //给android调用的方法
+    function changeH1(str){
+      oH1.innerHTML = str
+    }
+
+
+
+    //给android发送消息
+    function sendMsg(){
+      window.postMessage("你好 android！")
+    }
+    //监听  android发送的消息
+    document.addEventListener("message",function(e){
+      oH1.innerHTML="123123"
+       oH1.innerHTML = e.data
+    })
+  </script>
+</body>
+</html>
