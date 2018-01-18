@@ -9,11 +9,11 @@ import {
   WebView,
   Button
 } from 'react-native';
-
+import {connect} from "react-redux"
 import { Carousel} from 'antd-mobile';
 const width = Dimensions.get("window").width;
 
-export default class Detail extends Component<{}> {
+class Detail extends Component<{}> {
   static navigationOptions =({navigation})=>(
     {
       title: navigation.state.params.title
@@ -36,14 +36,13 @@ export default class Detail extends Component<{}> {
     this.webview.postMessage("你好  html!")
   }
   render() {
+     alert(this.props.detailData.title)
      const {cont,pics} = this.state
      // alert(cont)
      const id = this.props.navigation.state.params.id
     //this.props.navigation.state
     return (
       <View style={{flex:1}}>
-
-
         <View style={{flex:1}}>
           <WebView
             ref={webview => { this.webview = webview; }}
@@ -79,6 +78,7 @@ export default class Detail extends Component<{}> {
   }
 }
 
+export default connect(state=>({detailData:state.detailData}))(Detail)
 //引入线上的页面
         // <WebView
         //   ref={(webview) => { this.webview = webview; }}

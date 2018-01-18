@@ -1,56 +1,73 @@
 
 import React, { Component } from 'react';
+import {connect} from "react-redux"
 import {
   Text,
   View,
   Alert,
   Dimensions,
-  Image
+  Image,
+  ToastAndroid,
+  Button,
+  DeviceEventEmitter
 } from 'react-native';
 
-import { Button, Carousel} from 'antd-mobile';
-const width = Dimensions.get("window").width
 
-export default class SortList extends Component<{}> {
+const width = Dimensions.get("window").width
+const ClassList =(props)=>{
+
+  function emitChangeNumber(){
+    DeviceEventEmitter.emit("changeNumber",2)
+  }
+
+  return <View>
+    <View>
+      <Button title="按钮1" onPress={()=>props.changeNumber(1)} />
+    </View>
+    <View>
+      <Button title="按钮2" onPress={emitChangeNumber} />
+    </View>
+  </View>
+}
+
+class SortList extends Component<{}> {
   state = {
-    data: ['1', '2', '3'],
-    imgHeight: 176,
-    slideIndex: 0,
+    number:10
   }
   componentDidMount() {
-    // simulate img loading
-    setTimeout(() => {
+     //监听 changeNumber 事件
+    this.listener =  DeviceEventEmitter.addListener("changeNumber",(number)=>{
+      ToastAndroid.show("changeNumber",2000)
       this.setState({
-        data: ['AiyWuByWklrrUDlFignR', 'TekJlZRVCjLFexlOCuWn', 'IJOtIlfsYdTyaDTRVrLI'],
-      });
-    }, 100);
+        number
+      })
+    })
+  }
+  componentWillUnmount(){
+    //取消监听
+    this.listener.remove()
+  }
+  changeNumber(number){
+    this.setState({
+      number
+    })
   }
   render() {
-  
-    return (
+    //Alert.alert("this.props",JSON.stringify(this.props));
+    //this.props.dispatch.toString()
+    const {number} = this.state
+    return (  
       <View>
-        <Text>list</Text>
-        <Button>antd-mobile button</Button>
-        <Carousel
-          autoplay={false}
-          infinite
-          selectedIndex={1}
-          beforeChange={(from, to) => console.log(`slide from ${from} to ${to}`)}
-          afterChange={index => console.log('slide to', index)}
-        >
-          {this.state.data.map(val => (
-            <View
-              key={val}
-              style={{width:width,height:300 }}
-            >
-              <Image
-                source={{uri:`https://zos.alipayobjects.com/rmsportal/${val}.png`}}
-                style={{width:width,height:300 }}
-              />
-            </View>
-          ))}
-        </Carousel>
+        <Text>{number}</Text>
+        <ClassList changeNumber={this.changeNumber.bind(this)}></ClassList>
       </View>
     );
   }
 }
+const mapState = (state)=>{
+  return {
+    listData:state.listData
+  }
+}
+
+export default connect(state=>({listData:state.listData}))(SortList)

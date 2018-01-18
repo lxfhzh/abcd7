@@ -1,41 +1,72 @@
-import React, { Component } from 'react';
-import { View, TextInput } from 'react-native';
+import Home from "./Screens/Home"
+import Cart from "./Screens/Cart"
+import SortList from "./Screens/SortList"
+import User from "./Screens/User"
+import Detail from "./Screens/Detail"
+import React from "react"
+import { StackNavigator,TabNavigator  } from "react-navigation"
 
-class UselessTextInput extends Component {
-    render() {
-        return (
-            <TextInput
-                {...this.props} // 将父组件传递来的所有props传递给TextInput;比如下面的multiline和numberOfLines
-                editable = {true}
-                maxLength = {40}
-            />
-        );
+import {Provider} from "react-redux"
+import store from "./store"
+//创建tabs
+const Tabs = TabNavigator({
+  Home:{
+    screen:Home
+  },
+  SortList:{
+    screen:SortList,
+     //单独设置 sortlist页面的标题
+    navigationOptions :{
+      title:"分类列表"
     }
+  },
+  Cart:{
+    screen:Cart
+  },
+  User:{
+    screen:User
+  }
+}, {
+  // tabs的样式，配置
+  initialRouteName :"SortList",
+  tabBarPosition: 'bottom',
+  animationEnabled: true,
+  tabBarOptions: {
+    activeTintColor: '#e91e63',
+    labelStyle: {
+      fontSize: 12,
+    },
+    tabStyle: {
+      width: 100,    
+    },
+    style: {
+      backgroundColor: 'green',
+    }
+  },
+  //设置每一个页面的标题
+  navigationOptions:({navigation})=>({
+    title:navigation.state.routeName,
+    headerTitleStyle:{alignSelf:'center'}//让标题居中
+  })
+})
+
+
+
+// 创建整个app的路由  
+const Navigation  = StackNavigator({
+  //嵌套 tabs
+  Tabs:{
+    screen:Tabs
+  },
+  //添加详情
+  Detail:{
+    screen:Detail
+  }
+})
+
+const App = ()=>{
+  return <Provider store={store}>
+    <Navigation />
+  </Provider>
 }
-
-export default class UselessTextInputMultiline extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            text: 'Useless Multiline Placeholder',
-        };
-    }
-
-    // 你可以试着在模拟器生成的输入框中输入一种颜色，比如red，那么这个red就会作用到View的背景色样式上
-    render() {
-        return (
-            <View style={{
-                backgroundColor: this.state.text,
-                borderBottomColor: '#000000',
-                borderBottomWidth: 1 }}
-            >
-              <UselessTextInput
-                  multiline = {true}
-                  numberOfLines = {4}
-                  onChangeText={(text) => this.setState({text})}
-                  value={this.state.text}
-              />
-            </View>
-        );
-    }
-}
+export default App
